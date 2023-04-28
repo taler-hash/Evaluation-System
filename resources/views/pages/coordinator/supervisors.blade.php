@@ -65,12 +65,8 @@
                                     <div x-text="data.company_position" class="font-normal text-xs text-gray-500 capitalize"></div>
                                 </div>  
                             </th>
-                            <td class="px-6 py-4">
-                                09608526051
-                            </td>
-                            <td class="px-6 py-4">
-                                juriepedrogas@gmail.com
-                            </td>
+                            <td x-text="data.contact_number" class="px-6 py-4"></td>
+                            <td  x-text="data.email" class="px-6 py-4"></td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
                                     <div 
@@ -79,7 +75,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <a href="#" class="font-medium text-blue-600  hover:underline">Edit user</a>
+                                <button x-on:click="handleOpenEditModal(data.id)" href="#" class="font-medium text-blue-600  hover:underline">Edit user</button>
                             </td>
                         </tr>
                     </template>
@@ -89,6 +85,7 @@
         <div id="supervisorPagination" class="pt-2">
         </div>
         @include('/pages/coordinator/modals/addSupervisorModal')
+        @include('/pages/coordinator/modals/editSupervisorModal')
     </div>
 </div>
 
@@ -98,28 +95,46 @@
 <script>
     usePagination({id:'supervisorPagination'})
 
+    loadingButton({
+            id:'SubmitAddSupervisor',
+            label: 'Submit',
+            onClick:'handleSubmitaddSuperVisor',
+            param:'isLoading',
+            width:'fit',
+            color:'red'
+    })
+    loadingButton({
+            id:'SubmitEditSupervisor',
+            label: 'Update',
+            onClick:'handleSubmitaddSuperVisor',
+            param:'isLoading',
+            width:'fit',
+            color:'green'
+    })
+
     document.addEventListener('alpine:init',()=>{
         Alpine.data('supervisors',()=>({
-            input:{
-            firstname:'',
-            middlename:'',
-            lastname:'',
-            contact:'',
-            email:'',
-            company:'',
-            position:'',
-            password:''},
-            clearInputs:'',
-            errors:{
-                firstname:[],
-                lastname:[],
-                contact:[],
+            isLoading:false,
+            canSee:false,
+            input:
+            {
+                full_name:'adasdasd',
+                user_name:'',
+                contact_number:'',
+                email:'',
+                company_name:'',
+                company_position:'',
+                password:'',
+            },
+            errors:
+            {
+                full_name:[],
+                contact_number:[],
                 email:[],
-                company:[],
-                position:[],
+                company_name:[],
+                company_position:[],
                 password:[],
             },
-            clearError:'',
             modalType:'',
             page:1,
             searchString:'',
@@ -128,9 +143,6 @@
             links:[],
 
             init(){
-                this.clearInputs = this.input
-                this.clearError = this.errors
-
                 this.fetchSupervisors()
             },
 
@@ -154,7 +166,12 @@
                         return v
                     })
                     this.isLoading = false
+                    console.log(this.datas)
                 })
+            },
+
+            handleCanSee(){
+                this.canSee = !this.canSee
             },
 
             handleSearch(){
@@ -167,35 +184,62 @@
                 this.fetchSupervisors()
             },
 
+            clearInputs()
+            {
+                for(let prop in this.input){
+                        this.input[prop] = ''
+                    }
+                for(let prop in this.errors){
+                    this.errors[prop] = [];
+                }
+            },
+
             handleModal(modalType){
                 if(!modalType)
                 {
-                    this.errors = this.clearError
+                    this.clearInputs()
                 }
                 this.modalType = modalType
             },
 
             handleSubmitaddSuperVisor(){
-                axios.post('/coordinator/addNewSupervisor',
-                {
-                    firstname:this.firstname,
-                    lastname:this.lastname,
-                    contact:this.contact,
-                    email:this.email,
-                    company:this.company,
-                    position:this.position,
-                    password:this.password,
-                }
+                axios.post('/coordinator/addNewSupervisor',this.input
                 )
                 .then((res)=>{
-                    console.log(res)
+                    this.modalType = ''
+                    this.fetchSupervisors()
+                    useToast({
+                                message:'Successfully Added!',
+                                type:'Success'
+                            })
+                    this.clearInputs()
                 })
                 .catch((err)=>{
-                    console.log(err.response.data.errors)
                     this.errors = err.response.data.errors
-                    console.log(this.errors)
                 })
+            },
+
+            generateUsername(){
+                let name = this.input.full_name 
+                let nameArray = name.split(' '); // split the string into an array of words
+                let firstName = nameArray[0]; // get the first word as the first name
+                let lastName = nameArray[nameArray.length - 1]; // get the last word as the last name
+                let fullName = `${firstName}.${lastName}`; // concatenate the first and last names with a dot
+                this.input.user_name = fullName;
+            },
+
+            handleOpenEditModal(id){
+                
+                console.log(id)
+                this.inputs = this.datas.filter((v)=>{
+                    return v.id === id
+                })[0]
+                console.log(this.datas.filter((v)=>{
+                    return v.id === id
+                })[0])
+                this.modalType = 'editSupervisorModal'
             }
+            
         }))
     })
 </script>

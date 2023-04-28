@@ -2,14 +2,14 @@
   <!-- Main modal -->
   <div 
   x-cloak
-  x-show="modalType === 'addSupervisorModal'" x-transition:enter="transition duration-200 transform origin-center"
+  x-show="modalType === 'editSupervisorModal'" x-transition:enter="transition duration-200 transform origin-center"
   x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
   x-transition:leave="transition duration-200"
   x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 delay-100" tabindex="-1" aria-hidden="true" class=" bg-gray-400/50  flex justify-center fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-full max-h-full">
       <div class="relative w-[30rem] h-full">
           <!-- Modal content -->
           <div 
-            x-show="modalType === 'addSupervisorModal'" x-transition:enter="transition delay-100 duration-200 transform origin-center"
+            x-show="modalType === 'editSupervisorModal'" x-transition:enter="transition delay-100 duration-200 transform origin-center"
             x-transition:enter-start="scale-0" x-transition:enter-end="scale-100"
             x-transition:leave="transition duration-200 transform origin-center"
             x-transition:leave-start="scale-100" x-transition:leave-end="scale-0"
@@ -28,7 +28,7 @@
               <div class="p-6">
                 <div class="space-y-2 mb-2">
                     <p for="" class="">Full name Format(f, m, l)<span class="text-red-500">*</span></p>
-                    <input x-on:input.debounce.2000ms="generateUsername" x-model="input.full_name" type="text" class="rounded-md border border-gray-400 bg-gray-50 font-semibold px-2.5 p-1 w-full" placeholder="Input Firstname">
+                    <input x-model="input.full_name" type="text" class="rounded-md border border-gray-400 bg-gray-50 font-semibold px-2.5 p-1 w-full" placeholder="Input Firstname">
                     <template x-for="error in errors.full_name" class="w-fit">
                         <span x-text="error" class="text-xs text-rose-600 w-fit"></span><br>
                     </template>
@@ -89,7 +89,7 @@
               </div>
               <!-- Modal footer -->
               <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b ">
-                  <button id="SubmitAddSupervisor">Submit</button>
+                  <button id="SubmitEditSupervisor">Submit</button>
               </div>
           </div>
       </div>

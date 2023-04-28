@@ -15,7 +15,6 @@ class userSeeder extends Seeder
     public function run(): void
     {
         DB::table('admin_users')->insert([
-            'admin_id' => '1',
             'full_name' => 'juan delacruz',
             'user_name' => 'test.admin',
             'role_id' => '1',
@@ -23,7 +22,6 @@ class userSeeder extends Seeder
         ]);
 
         DB::table('coordinator_users')->insert([
-            'coordinator_id' => '1',
             'full_name' => 'pepito manaloto',
             'user_name' => 'test.coordinator',
             'role_id' => '2',
@@ -35,7 +33,6 @@ class userSeeder extends Seeder
         ]);
 
         DB::table('supervisor_users')->insert([
-            'supervisor_id' => '1',
             'full_name' => 'albert pablo',
             'user_name' => 'test.supervisor',
             'role_id' => '3',
@@ -55,6 +52,23 @@ class userSeeder extends Seeder
             'password' =>  Hash::make('password'),
             'course' => 'bsit',
             'status' => 'active'
+        ]);
+
+        DB::table('roles')->insert([
+            'role_id' => '1',
+            'role_name' => 'admin',
+        ]);
+        DB::table('roles')->insert([
+            'role_id' => '2',
+            'role_name' => 'coordinator',
+        ]);
+        DB::table('roles')->insert([
+            'role_id' => '3',
+            'role_name' => 'supervisor',
+        ]);
+        DB::table('roles')->insert([
+            'role_id' => '4',
+            'role_name' => 'student',
         ]);
     }
     
