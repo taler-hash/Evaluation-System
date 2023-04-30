@@ -2,14 +2,14 @@
   <!-- Main modal -->
   <div 
   x-cloak
-  x-show="modalType === 'addSupervisorModal'" x-transition:enter="transition duration-200 transform origin-center"
+  x-show="modalType === 'editStudentModal'" x-transition:enter="transition duration-200 transform origin-center"
   x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
   x-transition:leave="transition duration-200"
   x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 delay-100" tabindex="-1" aria-hidden="true" class=" bg-gray-400/50  flex justify-center fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-full max-h-full">
       <div class="relative w-[30rem] h-full">
           <!-- Modal content -->
           <div 
-            x-show="modalType === 'addSupervisorModal'" x-transition:enter="transition delay-100 duration-200 transform origin-center"
+            x-show="modalType === 'editStudentModal'" x-transition:enter="transition delay-100 duration-200 transform origin-center"
             x-transition:enter-start="scale-0" x-transition:enter-end="scale-100"
             x-transition:leave="transition duration-200 transform origin-center"
             x-transition:leave-start="scale-100" x-transition:leave-end="scale-0"
@@ -17,7 +17,7 @@
               <!-- Modal header -->
               <div class="flex items-start justify-between p-4 border-b rounded-t ">
                   <h3 class="text-xl font-semibold text-gray-900 ">
-                      Add New Supervisor
+                      Add New Student
                   </h3>
                   <button x-on:click="handleModal('')" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" data-modal-hide="defaultModal">
                       <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
@@ -27,23 +27,36 @@
               <!-- Modal body -->
               <div class="p-6">
                 <div class="space-y-2 mb-2">
+                    <p for="" class="">Student Number<span class="text-red-500">*</span></p>
+                    <input x-model="input.student_number" type="number" class="rounded-md border border-gray-400 bg-gray-50 font-semibold px-2.5 p-1 w-full" placeholder="Input Student Number">
+                    <template x-for="error in errors.student_number" class="w-fit">
+                        <span x-text="error" class="text-xs text-rose-600 w-fit"></span><br>
+                    </template>
+                </div>
+                <div class="space-y-2 mb-2">
                     <p for="" class="">Full name Format(f, m, l)<span class="text-red-500">*</span></p>
-                    <input x-on:input.debounce.2000ms="generateUsername" x-model="input.full_name" type="text" class="rounded-md border border-gray-400 bg-gray-50 font-semibold px-2.5 p-1 w-full" placeholder="Input Firstname">
+                    <input x-model="input.full_name" type="text" class="rounded-md border border-gray-400 bg-gray-50 font-semibold px-2.5 p-1 w-full" placeholder="Input Full name">
                     <template x-for="error in errors.full_name" class="w-fit">
                         <span x-text="error" class="text-xs text-rose-600 w-fit"></span><br>
                     </template>
                 </div>
                 <div class="space-y-2 mb-2">
-                    <p for="" class="">Company name<span class="text-red-500">*</span></p>
-                    <input x-model="input.company_name" type="text" class="rounded-md border border-gray-400 bg-gray-50 font-semibold px-2.5 p-1 w-full" placeholder="Input Company Name">
+                    <p for="" class="">Company Name<span class="text-red-500">*</span></p>
+                    <input x-model="input.company_name" type="text" class="rounded-md border border-gray-400 bg-gray-50 font-semibold px-2.5 p-1 w-full" placeholder="Input Company Name (must be existed)">
                     <template x-for="error in errors.company_name" class="w-fit">
-                        <span x-text="error" class="text-xs text-rose-600 w-fit"></span></br>
+                        <span x-text="error" class="text-xs text-rose-600 w-fit"></span><br>
                     </template>
                 </div>
                 <div class="space-y-2 mb-2">
-                    <p for="" class="">Position<span class="text-red-500">*</span></p>
-                    <input x-model="input.company_position" type="text" class="rounded-md border border-gray-400 bg-gray-50 font-semibold px-2.5 p-1 w-full" placeholder="Input Position">
-                    <template x-for="error in errors.company_position" class="w-fit">
+                    <p for="" class="">Choose Course<span class="text-red-500">*</span></p>
+                    <select x-model="input.course" class="bg-gray-50 border uppercase    border-gray-300 rounded-lg font-semibold focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <option selected value="">Choose a Course</option>
+                        <template x-for="data in course">
+                            <option  x-text="data.course" x-bind:value="data.course"></option>
+                        </template>
+                        
+                    </select>
+                    <template x-for="error in errors.course" class="w-fit">
                         <span x-text="error" class="text-xs text-rose-600 w-fit"></span><br>
                     </template>
                 </div>
@@ -62,12 +75,19 @@
                     </template>
                 </div>
                 <div class="space-y-2 mb-2">
-                    <p for="" class="">Generated Username <span class="text-red-500">*</span></p>
+                    <p for="" class="">Username <span class="text-red-500">*</span></p>
                     <input readonly x-model="input.user_name" type="text" class="rounded-md border border-gray-400 bg-gray-50 font-semibold px-2.5 p-1 w-full" placeholder="Generated Username">
                     <template x-for="error in errors.user_name" class="w-fit">
                         <span x-text="error" class="text-xs text-rose-600 w-fit"></span><br>
                     </template>
                 </div>  
+                <div class="space-y-2 mb-2">
+                    <label  class="block mb-2 text-sm font-medium text-gray-900">Select status</label>
+                    <select x-model="input.status" class="bg-gray-50 border border-gray-300 rounded-lg font-semibold focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
                 <div class="space-y-2 mb-2">
                     <p for="" class="">Password <span class="text-red-500">*</span></p>
                     <div class="flex">
@@ -89,7 +109,7 @@
               </div>
               <!-- Modal footer -->
               <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b ">
-                  <button id="SubmitAddSupervisor">Submit</button>
+                  <button id="submitEditStudent">Submit</button>
               </div>
           </div>
       </div>

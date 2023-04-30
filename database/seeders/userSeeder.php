@@ -37,9 +37,10 @@ class userSeeder extends Seeder
             'user_name' => 'test.supervisor',
             'role_id' => '3',
             'password' =>  Hash::make('password'),
-            'company_name' => 'Lex Mark inc.',
-            'company_position' => 'IT Lead',
+            'company_name' => 'lex mark inc.',
+            'company_position' => 'it lead',
             'contact_number' => '091234566789',
+            'course_handled' => 'bsit',
             'email' => 'albertpablo@gmail.com',
             'status' => 'active'
         ]);
@@ -51,7 +52,11 @@ class userSeeder extends Seeder
             'role_id' => '4',
             'password' =>  Hash::make('password'),
             'course' => 'bsit',
-            'status' => 'active'
+            'status' => 'active',
+            'email' => 'test@gmail.com',
+            'contact_number' => '12345678901',
+            'batch_year' => '2022-2023',
+            'company_name' => 'lex mark inc.'
         ]);
 
         DB::table('roles')->insert([
@@ -69,6 +74,28 @@ class userSeeder extends Seeder
         DB::table('roles')->insert([
             'role_id' => '4',
             'role_name' => 'student',
+        ]);
+
+        DB::table('course')->insert([
+            'course' => 'bsit'
+        ]);
+        DB::table('course')->insert([
+            'course' => 'ba-polsci'
+        ]);
+        DB::table('course')->insert([
+            'course' => 'bshm'
+        ]);
+        DB::table('course')->insert([
+            'course' => 'bshrm'
+        ]);
+        DB::table('course')->insert([
+            'course' => 'bsba'
+        ]);
+        DB::table('course')->insert([
+            'course' => 'bsed'
+        ]);
+        DB::table('course')->insert([
+            'course' => 'beed'
         ]);
     }
     

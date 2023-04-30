@@ -18,8 +18,12 @@ return new class extends Migration
             $table->integer('role_id');
             $table->string('user_name');
             $table->string('password');
+            $table->string('batch_year');
+            $table->string('email');
+            $table->string('contact_number');
             $table->string('course');
             $table->string('status');
+            $table->string('company_name');
         });
     }
 

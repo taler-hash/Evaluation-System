@@ -35,6 +35,9 @@
                             Name
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            Username
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                             Contact #
                         </th>
                         <th scope="col" class="px-6 py-3">
@@ -50,7 +53,7 @@
                 </thead>
                 <tbody>
                     <tr x-cloak x-show="isLoading" class="p-4">
-                        <td colspan="6" class="w-full text-center bg-white p-4 m-4">
+                        <td colspan="7" class="w-full text-center bg-white p-4 m-4">
                             <span class="p-4 bg-red-500 font-bold text-white rounded-lg">Loading</span>
                         </td>
                     </tr>
@@ -65,6 +68,7 @@
                                     <div x-text="data.company_position" class="font-normal text-xs text-gray-500 capitalize"></div>
                                 </div>  
                             </th>
+                            <td x-text="data.user_name" class="px-6 py-4"></td>
                             <td x-text="data.contact_number" class="px-6 py-4"></td>
                             <td  x-text="data.email" class="px-6 py-4"></td>
                             <td class="px-6 py-4">
@@ -75,7 +79,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <button x-on:click="handleOpenEditModal(data.id)" href="#" class="font-medium text-blue-600  hover:underline">Edit user</button>
+                                <button x-on:click="handleOpenEditModal(data.id)" href="#" class="font-medium text-blue-600  hover:underline">Edit Supervisor</button>
                             </td>
                         </tr>
                     </template>
@@ -106,7 +110,7 @@
     loadingButton({
             id:'SubmitEditSupervisor',
             label: 'Update',
-            onClick:'handleSubmitaddSuperVisor',
+            onClick:'handleUpdateSubmit',
             param:'isLoading',
             width:'fit',
             color:'green'
@@ -114,18 +118,20 @@
 
     document.addEventListener('alpine:init',()=>{
         Alpine.data('supervisors',()=>({
-            isLoading:false,
             canSee:false,
             input:
             {
-                full_name:'adasdasd',
+                id:'',
+                full_name:'',
                 user_name:'',
                 contact_number:'',
                 email:'',
                 company_name:'',
                 company_position:'',
+                status:'',
                 password:'',
             },
+            defaultInput:'',
             errors:
             {
                 full_name:[],
@@ -203,9 +209,11 @@
             },
 
             handleSubmitaddSuperVisor(){
+                this.isLoading = true
                 axios.post('/coordinator/addNewSupervisor',this.input
                 )
                 .then((res)=>{
+                    this.isLoading = false
                     this.modalType = ''
                     this.fetchSupervisors()
                     useToast({
@@ -215,6 +223,7 @@
                     this.clearInputs()
                 })
                 .catch((err)=>{
+                    this.isLoading = false
                     this.errors = err.response.data.errors
                 })
             },
@@ -225,21 +234,59 @@
                 let firstName = nameArray[0]; // get the first word as the first name
                 let lastName = nameArray[nameArray.length - 1]; // get the last word as the last name
                 let fullName = `${firstName}.${lastName}`; // concatenate the first and last names with a dot
-                this.input.user_name = fullName;
+                this.input.user_name = fullName.toLowerCase();
             },
 
             handleOpenEditModal(id){
                 
-                console.log(id)
-                this.inputs = this.datas.filter((v)=>{
+                let filteredData = this.datas.filter((v)=>{
                     return v.id === id
                 })[0]
-                console.log(this.datas.filter((v)=>{
-                    return v.id === id
-                })[0])
+
+                for (let i in this.input) {
+                    for (let f in filteredData) {
+                        if(i === f && i !== 'password' ){
+                            this.input[f] = filteredData[f]
+                        }
+                    }
+                }
                 this.modalType = 'editSupervisorModal'
+                this.defaultInput = JSON.stringify(this.input)            
+            },
+
+            handleUpdateSubmit(){
+                if(this.defaultInput === JSON.stringify(this.input))
+                {
+                    useToast({
+                        message:'No Changes were Made',
+                        type:'info'
+                    })
+                }
+                else
+                {
+                    this.isLoading = true
+                    axios.post('/coordinator/updateSupervisor', this.input)
+                    .then((res)=>{
+
+                        if(res.data === 'success')
+                        {
+                            this.fetchSupervisors()
+                            useToast({
+                                message:'Successfully Updated',
+                                type:'success'
+                            })
+                            this.isLoading = false
+                            this.clearInputs()
+                            this.modalType = ''
+                            
+                        }
+                    })
+                    .catch((err)=>{
+                        this.isLoading = false
+                        this.errors = err.response.data.errors
+                    })
+                }
             }
-            
         }))
     })
 </script>

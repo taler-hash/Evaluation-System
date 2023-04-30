@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('company_name');
             $table->string('company_position');
             $table->string('contact_number');
+            $table->string('course_handled');
             $table->string('email');
             $table->string('status');
         });

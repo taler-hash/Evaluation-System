@@ -39,20 +39,37 @@ use App\Http\Controllers\studentController;
             Route::get('/portfolios',[coordinatorController::class,'portfolios']);
             Route::get('/supervisors',[coordinatorController::class,'supervisors']);
             Route::get('/students',[coordinatorController::class,'students']);
+            Route::get('/evaluation',[coordinatorController::class,'evaluation']);
 
             //Api Routes
             Route::prefix('coordinator')->group(function(){
+
+                //Supervisor Side
                 Route::get('/fetchSupervisors',[coordinatorController::class,'fetchSupervisors']);
                 Route::post('/addNewSupervisor',[coordinatorController::class,'addNewSupervisor']);
+                Route::post('/updateSupervisor',[coordinatorController::class,'updateSupervisor']);
+
+                //Student Side
+                Route::get('/fetchStudents',[coordinatorController::class,'fetchStudents']);
+                Route::post('/addNewStudent',[coordinatorController::class,'addNewStudent']);
+                Route::post('/updateStudent',[coordinatorController::class,'updateStudent']);
             });
 
+        
         //Supervisor
-        Route::prefix('supervisor')->group(function(){
-        });
+
+            //Web Routes
+            Route::get('/evaluateStudents',[supervisorController::class,'evaluateStudents']);
+                    
+            //Api Routes
+            Route::prefix('supervisor')->group(function(){
+                Route::get('/fetchStudents',[supervisorController::class,'fetchStudents']);
+            });
 
         //Student
         Route::prefix('student')->group(function(){
         });
+        
 
         
     });

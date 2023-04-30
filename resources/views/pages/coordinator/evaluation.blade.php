@@ -3,19 +3,14 @@
 @section('navContent')
 
 
-@section('header', 'Students')
+@section('header', 'Evaluation')
 
 
 @section('content')
 
 <div class="px-8 w-full h-[calc(100%-4.78rem)] overflow-hidden">
     <div x-data="student"  class="w-full h-full">
-        <div class="flex items-center justify-between pb-2 ">
-            <div>
-                <button x-on:click="handleModal('addStudentModal')" type="button" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 transition">
-                    Add
-                </button>
-            </div>
+        <div class="flex items-center justify-end pb-2 ">
             <label for="table-search" class="sr-only">Search</label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">

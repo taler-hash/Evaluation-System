@@ -3,19 +3,14 @@
 @section('navContent')
 
 
-@section('header', 'Students')
+@section('header', 'Evaluate')
 
 
 @section('content')
 
 <div class="px-8 w-full h-[calc(100%-4.78rem)] overflow-hidden">
     <div x-data="student"  class="w-full h-full">
-        <div class="flex items-center justify-between pb-2 ">
-            <div>
-                <button x-on:click="handleModal('addStudentModal')" type="button" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 transition">
-                    Add
-                </button>
-            </div>
+        <div class="flex items-center justify-end pb-2 ">
             <label for="table-search" class="sr-only">Search</label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -33,9 +28,6 @@
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Name
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Company
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Username
@@ -74,16 +66,6 @@
                                     <div x-text="data.course" class="font-normal text-xs text-gray-500 capitalize"></div>
                                 </div>  
                             </th>
-                            <th scope="row" class=" items-center px-6 py-4 text-gray-900 whitespace-nowrap">
-                                <div class="flex">
-                                    <div x-text="data.supervisor.company_name.charAt(0)" class="p-3 h-fit rounded-lg bg-green-500 text-lg font-bold text-white capitalize"></div>
-                                    <div class="pl-3">
-                                        <div x-text="data.supervisor.company_name" class="text-base font-semibold capitalize"></div>
-                                        <div x-text="data.supervisor.full_name" class="font-normal text-sm text-gray-500 capitalize"></div>
-                                        <div x-text="data.supervisor.company_position" class="font-normal text-xs text-gray-500 capitalize"></div>
-                                    </div>  
-                                </div>
-                            </th>
                             <td x-text="data.user_name" class="px-6 py-4"></td>
                             <td x-text="data.batch_year" class="px-6 py-4"></td>
                             <td  x-text="data.email" class="px-6 py-4"></td>
@@ -96,7 +78,8 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <button x-on:click="handleOpenEditModal(data.id)" href="#" class="font-medium text-blue-600  hover:underline">Edit Student</button>
+                                <button x-on:click="handleOpenCreateWeeklyEvaluationModal(data.id)" href="#" class="font-medium text-blue-600  hover:underline">View</button>
+                                <button x-on:click="handleOpenCreateWeeklyEvaluationModal(data.id)" href="#" class="font-medium text-blue-600  hover:underline">Evaluate</button>
                             </td>
                         </tr>
                     </template>
@@ -105,8 +88,8 @@
         </div>
         <div id="studentPagination" class="pt-2">
         </div>
-        @include('/pages/coordinator/modals/addStudentModal')
-        @include('/pages/coordinator/modals/editStudentModal')
+        @include('/pages/supervisor/modals/createWeeklyEvaluation')
+        @include('/pages/supervisor/modals/viewWeeklyEvaluation')
     </div>
 </div>
 
@@ -117,23 +100,6 @@
 <script>
 
     usePagination({id:'studentPagination'})
-
-    loadingButton({
-            id:'SubmitAddStudent',
-            label: 'Submit',
-            onClick:'handleSubmitaddStudent',
-            param:'isLoading',
-            width:'fit',
-            color:'red'
-    })
-    loadingButton({
-            id:'submitEditStudent',
-            label: 'Submit',
-            onClick:'handleUpdateSubmit',
-            param:'isLoading',
-            width:'fit',
-            color:'green'
-    })
 
     document.addEventListener('alpine:init',()=>{
         Alpine.data('student',()=>({
@@ -173,7 +139,7 @@
 
             fetchStudents(){
                 this.isLoading = true
-                axios.get(`/coordinator/fetchStudents?page=${this.page}`,
+                axios.get(`/supervisor/fetchStudents?page=${this.page}`,
                 {
                     params:
                     {
@@ -181,9 +147,8 @@
                     }
                 })
                 .then((res)=>{
-                    this.course = res.data.course
-                    this.links = res.data.students.links
-                    this.datas = res.data.students.data
+                    this.links = res.data.links
+                    this.datas = res.data.data
                     this.links =this.links.map((v,i)=>{
                         if(i === 0)
                             return {...v, label:'Prev'}
@@ -261,9 +226,13 @@
                 this.canSee = !this.canSee
             },
 
-            handleOpenEditModal(id){
+            handleOpenCreateWeeklyEvaluationModal(id){
+                useToast({
+                        message:'You can only Evaluate every Monday',
+                        type:'info'
+                    })
                 console.log('Fired')
-                this.modalType = 'editStudentModal'
+                this.modalType = 'createWeeklyEvaluation'
                 let filteredData = this.datas.filter((v)=>{
                     return v.id === id
                 })[0]
