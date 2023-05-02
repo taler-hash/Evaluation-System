@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('portfolio', function (Blueprint $table) {
+        Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->string('student_number');
-            $table->string('portfolio_name');
-            $table->string('comment');
-            $table->string('status');
+            $table->integer('student_number');
+            $table->mediumtext('comment');
+            $table->string('rating');
+            $table->string('evaluated_at');
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('portfolio');
+        Schema::dropIfExists('comments');
     }
 };

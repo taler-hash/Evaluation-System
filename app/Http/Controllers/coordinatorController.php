@@ -159,7 +159,7 @@ class coordinatorController extends Controller
         $student->full_name = $request->full_name;
         $student->company_name = $request->company_name;
         $student->user_name = $request->user_name;
-        $student->batch_year = Carbon::now()->format('Y')."-".Carbon::now()->addYear()->format('Y');
+        $student->batch_year = Carbon::now()->format('Y');
         $student->email = $request->email;
         $student->contact_number = $request->contact_number;
         $student->course = $request->course;
@@ -234,5 +234,40 @@ class coordinatorController extends Controller
         ]);
 
         return response()->json('success');
+    }
+
+    public function fetchEvaluatedStudents(Request $request){
+        $data = Student::with(['supervisor', 
+        'comments' => function($q){
+            $q->orderBy('id','desc');
+        }])
+        ->where('course',session('course'))
+        ->where('full_name','like',"%$request->searchString%")
+        ->orWhere('company_name','like',"%$request->searchString%")
+        ->orWhere('batch_year','like',"%$request->searchString%")
+        ->orWhere('status','like',"%$request->searchString%")
+        ->paginate(5);
+        return response()->json($data);
+    }
+
+    //Portfolio
+
+    public function getAllBatchYears(){
+        $data = Student::select('batch_year')
+        ->orderBy('batch_year', 'desc')
+        ->distinct()
+        ->get();
+
+        return response()->json($data);
+    }
+
+    public function fetchStudentsPortfolio(Request $request){
+        $data = Student::with(['supervisor', 'portfolio'])
+        ->where('batch_year', $request->selectedYear)
+        ->where('course',session('course'))
+        ->orderBy('id','desc')
+        ->get();
+        $course = Course::select('*')->get();
+        return response()->json($data);
     }
 }

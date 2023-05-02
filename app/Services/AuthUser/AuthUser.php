@@ -15,14 +15,17 @@ class AuthUser
         ->first();
 
         $coordinator = Coordinator::select('full_name', 'course_handled' ,'password','role_id')
+        ->where('status', '=','active')
         ->where('user_name','=',$username)
         ->first();
 
         $supervisor = Supervisor::select('full_name', 'course_handled' , 'password','role_id','company_name')
+        ->where('status', '=','active')
         ->where('user_name','=',$username)
         ->first();
 
         $student = Student::select('full_name','user_name', 'password','role_id')
+        ->where('status', '=','active')
         ->where('user_name','=',$username)
         ->first();
 

@@ -91,7 +91,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <button x-on:click="handleOpenEditModal(data.id)" href="#" class="font-medium text-blue-600  hover:underline">Edit Student</button>
+                                <button x-on:click="handleOpenViewModal(data.id)" href="#" class="font-medium text-blue-600  hover:underline">View</button>
                             </td>
                         </tr>
                     </template>
@@ -100,8 +100,7 @@
         </div>
         <div id="studentPagination" class="pt-2">
         </div>
-        @include('/pages/coordinator/modals/addStudentModal')
-        @include('/pages/coordinator/modals/editStudentModal')
+        @include('/pages/coordinator/modals/viewEvaluation')
     </div>
 </div>
 
@@ -113,48 +112,14 @@
 
     usePagination({id:'studentPagination'})
 
-    loadingButton({
-            id:'SubmitAddStudent',
-            label: 'Submit',
-            onClick:'handleSubmitaddStudent',
-            param:'isLoading',
-            width:'fit',
-            color:'red'
-    })
-    loadingButton({
-            id:'submitEditStudent',
-            label: 'Submit',
-            onClick:'handleUpdateSubmit',
-            param:'isLoading',
-            width:'fit',
-            color:'green'
-    })
 
     document.addEventListener('alpine:init',()=>{
         Alpine.data('student',()=>({
-            input:{
-                id:'',
-                student_number:'',
+            defaultData:{
                 full_name:'',
-                user_name:'',
-                password:'',
-                batch_year:'',
-                email:'',
-                contact_number:'',
+                student_number:'',
                 course:'',
-                status:'',
-                company_name:''
-            },
-            errors:{
-                student_number:[],
-                full_name:[],
-                user_name:[],
-                password:[],
-                batch_year:[],
-                email:[],
-                contact_number:[],
-                course:[],
-                status:[]
+                comments:[],
             },
             course:[],
             modalType:'',
@@ -168,7 +133,7 @@
 
             fetchStudents(){
                 this.isLoading = true
-                axios.get(`/coordinator/fetchStudents?page=${this.page}`,
+                axios.get(`/coordinator/fetchEvaluatedStudents?page=${this.page}`,
                 {
                     params:
                     {
@@ -176,9 +141,8 @@
                     }
                 })
                 .then((res)=>{
-                    this.course = res.data.course
-                    this.links = res.data.students.links
-                    this.datas = res.data.students.data
+                    this.links = res.data.links
+                    this.datas = res.data.data
                     this.links =this.links.map((v,i)=>{
                         if(i === 0)
                             return {...v, label:'Prev'}
@@ -205,108 +169,32 @@
                 this.fetchStudents()
             },
 
-            clearInputs()
-            {
-                for(let prop in this.input){
-                        this.input[prop] = ''
-                    }
-                for(let prop in this.errors){
-                    this.errors[prop] = [];
-                }
-            },
-
             handleModal(modalType){
                 if(!modalType)
                 {
-                    this.clearInputs()
+                    for(let prop in this.data){
+                        this.data[prop] = ''
+                    }
                 }
                 this.modalType = modalType
             },
 
-            handleSubmitaddStudent(){
-                this.isLoading = true
-                axios.post('/coordinator/addNewStudent',this.input
-                )
-                .then((res)=>{
-                    this.isLoading = false
-                    this.modalType = ''
-                    this.fetchStudents()
-                    useToast({
-                                message:'Successfully Added!',
-                                type:'Success'
-                            })
-                    this.clearInputs()
-                })  
-                .catch((err)=>{
-                    this.isLoading = false
-                    this.errors = err.response.data.errors
-                })
-            },
-
-            generateUsername(){
-                let name = this.input.full_name 
-                let nameArray = name.split(' '); // split the string into an array of words
-                let firstName = nameArray[0]; // get the first word as the first name
-                let lastName = nameArray[nameArray.length - 1]; // get the last word as the last name
-                let fullName = `${firstName}.${lastName}`; // concatenate the first and last names with a dot
-                this.input.user_name = fullName.toLowerCase();
-            },
-
-            handleCanSee(){
-                this.canSee = !this.canSee
-            },
-
-            handleOpenEditModal(id){
-                console.log('Fired')
-                this.modalType = 'editStudentModal'
+            handleOpenViewModal(id){
+                
                 let filteredData = this.datas.filter((v)=>{
                     return v.id === id
                 })[0]
-                console.log(filteredData)
-                for (let i in this.input) {
+                
+                for (let i in this.defaultData) {
                     for (let f in filteredData) {
-                        if(i === f && i !== 'password' ){
-                            this.input[f] = filteredData[f]
+                        if(i === f){
+                            this.defaultData[i] = filteredData[f]
                         }
                     }
                 }
-                
-                this.defaultInput = JSON.stringify(this.input)            
+                console.log(this.defaultData)
+                this.modalType = 'viewEvaluationModal'           
             },
-
-            handleUpdateSubmit(){
-                if(this.defaultInput === JSON.stringify(this.input))
-                {
-                    useToast({
-                        message:'No Changes were Made',
-                        type:'info'
-                    })
-                }
-                else
-                {
-                    this.isLoading = true
-                    axios.post('/coordinator/updateStudent', this.input)
-                    .then((res)=>{
-
-                        if(res.data === 'success')
-                        {
-                            this.fetchStudents()
-                            useToast({
-                                message:'Successfully Updated',
-                                type:'success'
-                            })
-                            this.isLoading = false
-                            this.clearInputs()
-                            this.modalType = ''
-                            
-                        }
-                    })
-                    .catch((err)=>{
-                        this.isLoading = false
-                        this.errors = err.response.data.errors
-                    })
-                }
-            }
         }))
     })
 </script>

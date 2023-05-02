@@ -96,7 +96,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <button x-on:click="handleOpenEditModal(data.id)" href="#" class="font-medium text-blue-600  hover:underline">Edit Student</button>
+                                <button x-on:click="handleOpenEditModal(data.id)" href="#" class="font-medium text-blue-600  hover:underline">Edit</button>
                             </td>
                         </tr>
                     </template>

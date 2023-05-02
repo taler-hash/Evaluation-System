@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 use DB;
 
 class userSeeder extends Seeder
@@ -55,8 +56,22 @@ class userSeeder extends Seeder
             'status' => 'active',
             'email' => 'test@gmail.com',
             'contact_number' => '12345678901',
-            'batch_year' => '2022-2023',
+            'batch_year' => '2023',
             'company_name' => 'lex mark inc.'
+        ]);
+
+        DB::table('portfolio')->insert([
+            'student_number' => '1',
+            'portfolio_name' => 'renemer.dedasi-ojtDocuments',
+            'comment' => 'done',
+            'status' => 'approved'
+        ]);
+
+        DB::table('comments')->insert([
+            'student_number' => '1',
+            'comment' => 'hes doing good',
+            'rating' => 'excellent',
+            'evaluated_at' => now()->format('d/m/Y')
         ]);
 
         DB::table('roles')->insert([

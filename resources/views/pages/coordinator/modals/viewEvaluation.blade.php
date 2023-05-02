@@ -34,7 +34,6 @@
                         <div x-text="defaultData.course" class="font-normal text-xs text-gray-500 capitalize"></div>
                     </div>  
                 </div>
-                <p class="font-medium">Comments</p>
                 <div class="w-full h-[calc(100vh-15rem)] space-y-3 overflow-y-auto">
                     <template x-for="(data, index) in defaultData.comments">
                         <div class="relative p-2 border shadow-md rounded-lg shadow-gray-400">

@@ -8,7 +8,7 @@ function useToast({message, type})
         'green-600'
  Toastify({
     text: message,
-    duration: 404400,
+    duration: 4000,
     close: true,
     className: `border-l-4 border-${color} text-gray-700 font-bold shadow-md`,
     style: {

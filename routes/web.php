@@ -53,6 +53,13 @@ use App\Http\Controllers\studentController;
                 Route::get('/fetchStudents',[coordinatorController::class,'fetchStudents']);
                 Route::post('/addNewStudent',[coordinatorController::class,'addNewStudent']);
                 Route::post('/updateStudent',[coordinatorController::class,'updateStudent']);
+
+                //Evaluation Side
+                Route::get('/fetchEvaluatedStudents',[coordinatorController::class,'fetchEvaluatedStudents']);
+
+                //Portfolio Side
+                Route::get('/getAllBatchYears', [coordinatorController::class,'getAllBatchYears']);
+                Route::get('/fetchStudentsPortfolio',[coordinatorController::class,'fetchStudentsPortfolio']);
             });
 
         
@@ -64,21 +71,15 @@ use App\Http\Controllers\studentController;
             //Api Routes
             Route::prefix('supervisor')->group(function(){
                 Route::get('/fetchStudents',[supervisorController::class,'fetchStudents']);
+                Route::post('/weeklyCommentStudents',[supervisorController::class,'weeklyCommentStudents']);
             });
 
         //Student
         Route::prefix('student')->group(function(){
         });
-        
 
         
     });
-
-
-
-
-
-
 
 
 
