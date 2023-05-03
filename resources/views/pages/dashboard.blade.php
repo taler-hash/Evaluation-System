@@ -1,12 +1,15 @@
 @extends('layout.master')
 
+@section('navContent')
+
+
+@section('header', 'Dashboard')
+
 
 @section('content')
-
-<div class="">
-    Admindasdasd
-</div>
-
+    @if(session('role') === 4)
+        @include('/pages/student/dashboard')
+    @endif  
 @endsection
 
 @push('scripts')

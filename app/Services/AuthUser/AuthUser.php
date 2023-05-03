@@ -24,7 +24,7 @@ class AuthUser
         ->where('user_name','=',$username)
         ->first();
 
-        $student = Student::select('full_name','user_name', 'password','role_id')
+        $student = Student::select('full_name','user_name', 'password','role_id','student_number','batch_year')
         ->where('status', '=','active')
         ->where('user_name','=',$username)
         ->first();
@@ -65,6 +65,8 @@ class AuthUser
             session(['userName' => $student->user_name]);
             session(['role' => $student->role_id]);
             session(['course' => $student->course]);
+            session(['batchYear' => $student->batch_year]);
+            session(['studentNumber' => $student->student_number]);
             session(['roleName' => 'Student']);
             return response()->json('success');
         }
