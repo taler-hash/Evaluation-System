@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('student_number');
             $table->string('portfolio_name');
-            $table->string('comment');
+            $table->string('comment')->nullable();
             $table->string('status');
         });
     }

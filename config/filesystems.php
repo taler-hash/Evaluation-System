@@ -36,9 +36,9 @@ return [
             'throw' => false,
         ],
 
-        'documents' => [
+        'portfolio' => [
             'driver' => 'local',
-            'root' => storage_path('documents'),
+            'root' => storage_path('portfolio'),
             'throw' => false,
         ],
 

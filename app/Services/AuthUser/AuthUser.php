@@ -24,7 +24,7 @@ class AuthUser
         ->where('user_name','=',$username)
         ->first();
 
-        $student = Student::select('full_name','user_name', 'password','role_id','student_number','batch_year')
+        $student = Student::select('*')
         ->where('status', '=','active')
         ->where('user_name','=',$username)
         ->first();

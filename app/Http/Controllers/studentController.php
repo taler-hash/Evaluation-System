@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Models\Portfolio;
+use Storage;
+use Illuminate\Http\Response;
 
 use Illuminate\Http\Request;
 
@@ -19,9 +21,34 @@ class studentController extends Controller
         return response()->json($data);
     }
 
-    public function viewPdf($batchYear, $fileName){
-        $path = storage_path('documents/'.$batchYear.'/'.$fileName);
+    public function viewPdf(Request $request){
+        $fileContents = Storage::disk('portfolio')->get("$request->batchYear/".session('course')."/"."$request->portfolioName");
 
-        return response()->fie($path);
+        return new Response($fileContents, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$request->portfolioName.'"',
+        ]);
+    }
+
+    public function uploadDocument(Request $request){
+        $request->validate(
+        [
+            'pdf' => 'required:|mimetypes:application/pdf'
+        ],
+        [
+            'pdf.required' => 'Must have Uploaded File'
+        ]
+        );
+        $portfolio = new Portfolio();
+        $portfolio->student_number = session('studentNumber');
+        $portfolio->portfolio_name = "Portfolio_".session('batchYear')."_".session('course')."_".preg_replace('/\s+/', '_', session('fullName')) . ".pdf";
+        $portfolio->status = 'submitted';
+        $portfolio->save();
+
+        $pdf = $request->file('pdf');
+        $folderPath = session('batchYear') . "/" . session('course') . "/" . "Portfolio_".session('batchYear')."_".session('course')."_".preg_replace('/\s+/', '_', session('fullName')) . ".pdf";
+        Storage::disk('portfolio')->put($folderPath,file_get_contents($pdf));
+
+        return response()->json('success');
     }
 }

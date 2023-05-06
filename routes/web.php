@@ -77,7 +77,9 @@ use App\Http\Controllers\studentController;
         //Student
         Route::prefix('student')->group(function(){
             Route::get('/fetchPortfolio',[studentController::class,'fetchPortfolio']);
-            Route::get("/viewPdf/{$batchYear}/{$fileName}",[studentController::class,'viewPdf']);
+            Route::get('/viewPdf',[studentController::class,'viewPdf']);
+            Route::post('/uploadDocument', [studentController::class,'uploadDocument']);
+            
         });
 
         
