@@ -39,6 +39,13 @@ class studentController extends Controller
             'pdf.required' => 'Must have Uploaded File'
         ]
         );
+        if(is_null(Portfolio::select('student_number')->where('student_number',session('studentNumber'))->first()));
+        {
+            Portfolio::where('student_number',session('studentNumber'))
+            ->update([
+                'portfolio_name' => "Portfolio_".session('batchYear')."_".session('course')."_".preg_replace('/\s+/', '_', session('fullName')) . ".pdf"
+            ]);
+        }
         $portfolio = new Portfolio();
         $portfolio->student_number = session('studentNumber');
         $portfolio->portfolio_name = "Portfolio_".session('batchYear')."_".session('course')."_".preg_replace('/\s+/', '_', session('fullName')) . ".pdf";
