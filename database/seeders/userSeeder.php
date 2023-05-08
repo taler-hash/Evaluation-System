@@ -74,6 +74,11 @@ class userSeeder extends Seeder
             'evaluated_at' => now()->format('d/m/Y')
         ]);
 
+        DB::table('deadline')->insert([
+            'date' => '05/08/2023',
+            'desc' => 'start',
+        ]);
+
         DB::table('roles')->insert([
             'role_id' => '1',
             'role_name' => 'admin',

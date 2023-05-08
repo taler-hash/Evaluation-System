@@ -9,6 +9,7 @@ use App\Models\Student;
 use App\Models\Course;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use App\Models\Portfolio;
 use Carbon\Carbon;
 
 class coordinatorController extends Controller
@@ -262,12 +263,35 @@ class coordinatorController extends Controller
     }
 
     public function fetchStudentsPortfolio(Request $request){
-        $data = Student::with(['supervisor', 'portfolio'])
+        $data = Student::with([
+            'supervisor', 
+            'portfolio'])
         ->where('batch_year', $request->selectedYear)
         ->where('course',session('course'))
         ->orderBy('id','desc')
         ->get();
         $course = Course::select('*')->get();
         return response()->json($data);
+    }
+
+    public function addComment(Request $request){
+
+        Portfolio::where('student_number', $request->student_number)
+        ->update([
+            'comment' => $request->comment,
+            'status' => 'correction'
+        ]);
+
+        return response()->json('success');
+    }
+
+    public function approvePortfolio(Request $request){
+
+        Portfolio::where('student_number', $request->student_number)
+        ->update([
+            'status' => 'approved'
+        ]);
+
+        return response()->json('success');
     }
 }

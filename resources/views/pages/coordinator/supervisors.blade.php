@@ -12,7 +12,7 @@
     <div x-data="supervisors"  class="w-full h-full">
         <div class="flex items-center justify-between pb-2 ">
             <div>
-                <button x-on:click="handleModal('addSupervisorModal')" type="button" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 transition">
+                <button x-on:click="handleOpenAddSupervisorModal('addSupervisorModal')" type="button" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 transition">
                     Add
                 </button>
             </div>
@@ -172,7 +172,6 @@
                         return v
                     })
                     this.isLoading = false
-                    console.log(this.datas)
                 })
             },
 
@@ -200,12 +199,18 @@
                 }
             },
 
-            handleModal(modalType){
+            handleOpenAddSupervisorModal(modalType){
+                
+                this.modalType = modalType
+            },
+
+            handleCloseModal(modalType){
                 if(!modalType)
                 {
                     this.clearInputs()
                 }
-                this.modalType = modalType
+
+                this.modalType = ''
             },
 
             handleSubmitaddSuperVisor(){

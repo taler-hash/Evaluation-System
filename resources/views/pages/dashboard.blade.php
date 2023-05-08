@@ -7,6 +7,9 @@
 
 
 @section('content')
+    @if(session('role') === 1)
+        @include('/pages/admin/dashboard')
+    @endif  
     @if(session('role') === 4)
         @include('/pages/student/dashboard')
     @endif  

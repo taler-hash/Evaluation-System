@@ -30,8 +30,16 @@ use App\Http\Controllers\studentController;
         });
         
         //Admin
-        Route::prefix('admin')->group(function(){
-        });
+            //Web Routes
+            Route::get('/coordinator',[adminController::class,'coordinator']);    
+
+            //Api Routes
+            Route::prefix('admin')->group(function(){
+
+                Route::get('/fetchCoordinator',[adminController::class,'fetchCoordinator']);
+                Route::post('/addCoordinator',[adminController::class,'addCoordinator']);
+                Route::post('/updateCoordinator',[adminController::class,'updateCoordinator']);
+            });
 
         //Coordinator
         
@@ -60,6 +68,8 @@ use App\Http\Controllers\studentController;
                 //Portfolio Side
                 Route::get('/getAllBatchYears', [coordinatorController::class,'getAllBatchYears']);
                 Route::get('/fetchStudentsPortfolio',[coordinatorController::class,'fetchStudentsPortfolio']);
+                Route::post('/addComment',[coordinatorController::class,'addComment']);
+                Route::post('/approvePortfolio', [coordinatorController::class,'approvePortfolio']);
             });
 
         
@@ -77,9 +87,9 @@ use App\Http\Controllers\studentController;
         //Student
         Route::prefix('student')->group(function(){
             Route::get('/fetchPortfolio',[studentController::class,'fetchPortfolio']);
-            Route::get('/viewPdf',[studentController::class,'viewPdf']);
-            Route::post('/uploadDocument', [studentController::class,'uploadDocument']);
-            
+            Route::get('/fetchDeadline',[studentController::class,'fetchDeadline']);
+            Route::get('/viewPdf/{batchYear}/{portfolioName}',[studentController::class,'viewPdf']);
+            Route::post('/uploadDocument',[studentController::class,'uploadDocument']);
         });
 
         

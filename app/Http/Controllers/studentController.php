@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Portfolio;
+use App\Models\Deadline;
 use Storage;
 use Illuminate\Http\Response;
 
@@ -20,36 +21,46 @@ class studentController extends Controller
 
         return response()->json($data);
     }
+    
+    public function fetchDeadline(){
+        $data = Deadline::all();
 
-    public function viewPdf(Request $request){
-        $fileContents = Storage::disk('portfolio')->get("$request->batchYear/".session('course')."/"."$request->portfolioName");
+        return response()->json($data);
+    }
+
+    public function viewPdf($batchYear, $portfolioName){
+        $fileContents = Storage::disk('portfolio')->get("$batchYear/".session('course')."/"."$portfolioName");
 
         return new Response($fileContents, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$request->portfolioName.'"',
+            'Content-Disposition' => 'inline; filename="'.$portfolioName.'"',
         ]);
     }
 
     public function uploadDocument(Request $request){
+        
         $request->validate(
         [
             'pdf' => 'required:|mimetypes:application/pdf'
         ],
         [
-            'pdf.required' => 'Must have Uploaded File'
+            'pdf.required' => 'Must a upload a File'
         ]
         );
-        if(is_null(Portfolio::select('student_number')->where('student_number',session('studentNumber'))->first()));
+        if(Portfolio::where('student_number', session('studentNumber'))->exists() && is_null(Portfolio::select('student_number')->where('student_number',session('studentNumber'))->first()->portfolio_name))
         {
             Portfolio::where('student_number',session('studentNumber'))
             ->update([
-                'portfolio_name' => "Portfolio_".session('batchYear')."_".session('course')."_".preg_replace('/\s+/', '_', session('fullName')) . ".pdf"
+                'portfolio_name' => "Portfolio_".session('batchYear')."_".session('course')."_".preg_replace('/\s+/', '_', session('fullName')) . ".pdf",
+                'status' => $request->status,
+                'comment' => null
             ]);
+            return response()->json('success');
         }
         $portfolio = new Portfolio();
         $portfolio->student_number = session('studentNumber');
         $portfolio->portfolio_name = "Portfolio_".session('batchYear')."_".session('course')."_".preg_replace('/\s+/', '_', session('fullName')) . ".pdf";
-        $portfolio->status = 'submitted';
+        $portfolio->status = $request->status;
         $portfolio->save();
 
         $pdf = $request->file('pdf');

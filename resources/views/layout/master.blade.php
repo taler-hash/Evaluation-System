@@ -21,7 +21,7 @@
                                 <div class="flex items-center pb-2 p-4">
                                     <p x-text="firstLetter" class="font-bold capitalize text-white rounded-lg p-2 px-4 border-amber-600 border-2 bg-amber-400"></p>
                                     <div class="pl-2">
-                                        <p class="font-medium text-sm">{{session('fullName')}}</p>
+                                        <p class="font-medium text-sm capitalize">{{session('fullName')}}</p>
                                         <p class="font.medium text-xs">{{ session('roleName')}}</p>
                                     </div>
                                 </div>

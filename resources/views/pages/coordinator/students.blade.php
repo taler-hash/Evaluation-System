@@ -12,7 +12,7 @@
     <div x-data="student"  class="w-full h-full">
         <div class="flex items-center justify-between pb-2 ">
             <div>
-                <button x-on:click="handleModal('addStudentModal')" type="button" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 transition">
+                <button x-on:click="handleOpenAddStudentModal('addStudentModal')" type="button" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 transition">
                     Add
                 </button>
             </div>
@@ -146,7 +146,7 @@
                 batch_year:'',
                 email:'',
                 contact_number:'',
-                course:'',
+                course:"{{session('course')}}",
                 status:'',
                 company_name:''
             },
@@ -220,12 +220,20 @@
                 }
             },
 
-            handleModal(modalType){
+            handleOpenAddStudentModal(modalType){
                 if(!modalType)
                 {
                     this.clearInputs()
                 }
                 this.modalType = modalType
+            },
+
+            handleCloseModal(modalType){
+                if(!modalType)
+                {
+                    this.clearInputs()
+                }
+                this.modalType = ''
             },
 
             handleSubmitaddStudent(){
@@ -262,12 +270,10 @@
             },
 
             handleOpenEditModal(id){
-                console.log('Fired')
                 this.modalType = 'editStudentModal'
                 let filteredData = this.datas.filter((v)=>{
                     return v.id === id
                 })[0]
-                console.log(filteredData)
                 for (let i in this.input) {
                     for (let f in filteredData) {
                         if(i === f && i !== 'password' ){
