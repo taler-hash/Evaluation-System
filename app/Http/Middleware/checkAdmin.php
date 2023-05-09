@@ -17,8 +17,8 @@ class checkAdmin
     {
        
             if(session('role') === 1)
-            return $next($request);
+            {return $next($request);}
         
-        return redirect('/login');
+        return redirect('/dashboard');
     }
 }

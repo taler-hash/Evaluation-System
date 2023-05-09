@@ -16,7 +16,7 @@ class checkCoordinator
     public function handle(Request $request, Closure $next): Response
     {
         if(session('role') === 2)
-            return $next($request);
+        {return $next($request);}
 
         return redirect('/login');
     }

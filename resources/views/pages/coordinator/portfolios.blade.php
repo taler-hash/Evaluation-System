@@ -14,15 +14,27 @@
             <div class="shrink">
                 <p class="font-medium">Batch Year</p>
             </div>
-            <select x-model="selectedYear" class="bg-gray-50 border border-gray-300 rounded-lg font-semibold focus:ring-blue-500 focus:border-blue-500 block w-fit p-2.5">
+            <select x-model="selectedYear" x-on:change="handleChangeSelectedBatchYear()" class="bg-gray-50 border border-gray-300 rounded-lg font-semibold focus:ring-blue-500 focus:border-blue-500 block w-fit p-2.5">
                 <template x-for="data in batchYears">
                     <option x-text="data.batch_year" x-bind:value="data.batch_year"></option>
                 </template>
             </select>
         </div>
-        <button x-on:click="selected = ''; comment = ''" class="px-2 py-1 bg-red-500 transition hover:bg-red-600 text-sm font-bold text-white rounded-lg">Hide</button>
+        <div x-show="!deadline || updateDeadline" class="w-fit flex items-center space-x-1">
+            <div class="shrink">
+                <p class="font-medium">Set Deadline</p>
+            </div>
+            <input x-model="setDeadline" min="{{ date('Y-m-d')}}" type="date" class="w-fit p-2 border border-gray-300 rounded-lg font-semibold" >
+            <button  x-on:click="handleSubmitSetDeadline()" class="px-2.5 py-2 font-bold text-white rounded-lg bg-green-500 transition hover:bg-green-600">Submit</button>
+        </div>
+        <div x-show="deadline && !updateDeadline " class="">
+            Deadline Date <span class="font-bold" x-text="stringDateConversion(deadline)"></span>
+        </div>
     </div>
-    
+    <div class="flex items-center mt-2 space-x-1">
+        <button x-on:click="selected = ''; comment = ''" class="px-2 py-1 bg-red-500 transition hover:bg-red-600 text-sm font-bold text-white rounded-lg">Hide</button>
+        <button x-on:click="updateDeadline = !updateDeadline" class="px-2 py-1 bg-green-500 transition hover:bg-green-600 text-sm font-bold text-white rounded-lg">Update Deadline</button>
+    </div>
     <div  class=" w-full max-h-[calc(100%-4.78rem)] overflow-y-auto flex justify-center flex-wrap">
         <template x-for="(data, index) in students">
             <div class="p-2 ">
@@ -39,7 +51,7 @@
                                 </a>
                                 <p x-show="data.portfolio === null" class="font-medium text-sm ">No Document yet</p>
                             <div x-show="data.portfolio !== null" class="">
-                                <p class="text-xs font-medium mt-2">Status:
+                                <p class="text-xs font-medium mt-2 flex">Status:
                                     <span x-text="data.portfolio === null ? 'None' : data.portfolio.status"
                                         class="text-xs text-white font-bold px-1.5 py-0.5 rounded-full"
                                         x-bind:class="
@@ -48,8 +60,10 @@
                                         data.portfolio !== null && data.portfolio.status === 'updated' ? 'bg-sky-500':
                                         data.portfolio !== null && data.portfolio.status === 'approved' ? 'bg-green-500':
                                             'bg-red-500'
-                                        "></span>
-                            
+                                    ">
+                                    </span>
+                                    
+                                    <span x-show="data.portfolio.status === 'approved' && data.portfolio !== null && dateCompare(data.portfolio.approved_at) !== 'no value'" x-bind:class="data.portfolio !== null && dateCompare(data.portfolio.approved_at) ? 'bg-green-500' : 'bg-amber-500'"  x-text="data.portfolio !== null && dateCompare(data.portfolio.approved_at) ? 'on-time' : 'late'"class=" text-xs text-white font-bold px-1.5 py-0.5 rounded-full"></span>
                                 </p>
                                 <div class="mt-4" x-show="data.portfolio !== null && data.portfolio.status !== 'correction' && data.portfolio.status !== 'approved'">
                                     <button x-on:click="handleApprovePortfolio(data.student_number)" class="text-sm font-medium text-white px-2 py-1 rounded-lg transition bg-green-600 hover:bg-green-700">Approve</button>
@@ -94,8 +108,6 @@
                 </div>
             </div>
         </template>
-        
-        
     </div>
 </div>
 
@@ -110,30 +122,56 @@
             comment:'',
             batchYears:[],
             selectedYear:'',
+            deadline:[],
+            setDeadline:[],
+            portfolioDate:true,
             students:[],
+            updateDeadline:false,
 
             init(){
-                this.fetchAllBatchYears()
-
-                this.$watch('selectedYear', ()=>{ 
-                    this.fetchStudentsPortfolio()})
+                this.fetchAllBatchYears().then(()=>{
+                    this.getAllDeadline().then(()=>{
+                        this.fetchStudentsPortfolio()
+                    })
+                })
             },
 
-            fetchAllBatchYears(){
-                axios.get('/coordinator/getAllBatchYears')
+            async fetchAllBatchYears(){
+                await axios.get('/coordinator/getAllBatchYears')
                 .then((res)=>{
 
                     this.batchYears = res.data
-                    this.selectedYear = res.data[0]
-                    this.fetchStudentsPortfolio()
+                    this.selectedYear = res.data[0].batch_year
                 })
                 .catch((err)=>{
                     console.log(err)
                 })
             },
 
-            fetchStudentsPortfolio(){
-                axios.get('/coordinator/fetchStudentsPortfolio',
+            async getAllDeadline(){
+                await axios.get('/coordinator/getAllDeadline',
+                {
+                    params:
+                    {
+                        selectedYear:this.selectedYear
+                    }
+                })
+                .then((res)=>{
+                    if(res.data.length !== 0)
+                    {
+                        this.deadline = res.data[0].date;
+                    }
+                    else
+                    {
+                        this.deadline = ''
+                        
+                    }
+                    
+                })
+            },
+
+            async fetchStudentsPortfolio(){
+                await axios.get('/coordinator/fetchStudentsPortfolio',
                 {
                     params : 
                     {
@@ -143,14 +181,50 @@
                 )
                 .then((res)=>{
                     this.students = res.data
+                    console.log(this.students)
                 })
                 .catch((err)=>{
                     console.log(err)
                 })
             },
 
+            dateCompare(portfolioDate) {
+                if(this.deadline)
+                {
+                    
+                    // Convert the input date string to a Date object
+                    const date = new Date(portfolioDate);
+
+                    // Create a Date object for May 8th, 2023
+                    const dateArray = this.deadline.split("/").map(Number);
+                    const dateToCompare = new Date(dateArray[2], dateArray[0] - 1, dateArray[1]); // Note: month is zero-indexed
+                    // Compare the two dates
+                    return  date <= dateToCompare;
+                }
+                else
+                {
+                    return 'no value'
+                }
+            },
+
+            stringDateConversion(deadlineDate){
+                if(deadlineDate)
+                {
+                    const inputDate = deadlineDate;
+                    const date = new Date(inputDate);
+                    const options = { month: 'long', day: 'numeric', year: 'numeric' };
+                    const outputDate = date.toLocaleDateString('en-US', options);
+                    return outputDate;
+                }
+                return false
+            },
+
+            handleChangeSelectedBatchYear(){
+                this.getAllDeadline()
+                this.fetchStudentsPortfolio()
+            },
+
             handleSubmitComment(studentNumber){
-                console.log(studentNumber)
                 axios.post('/coordinator/addComment',
                 {
                     student_number:studentNumber,
@@ -187,6 +261,39 @@
                         this.fetchStudentsPortfolio()
                     }
                 })
+            },
+
+            handleSubmitSetDeadline(){
+                if(this.setDeadline.length === 0)
+                {
+                    useToast({
+                        message:'Select A deadline Date',
+                        type:'warning'
+                    })
+                    return false
+                }
+                const dateArray = this.setDeadline.split('-')
+                axios.post('/coordinator/setDeadline',
+                {
+                    batchYear:this.selectedYear,
+                    date: `${dateArray[1]}/${dateArray[2]}/${dateArray[0]}`
+                })
+                .then((res)=>{
+                    if(res.data === 'success')
+                    {
+                        useToast({
+                            message:'Set Deadline Success',
+                            type:'success'
+                        })
+                        this.getAllDeadline()
+                        this.updateDeadline = false
+                        this.setDeadline = ''
+                        
+                    }
+                })
+                
+                console.log(`${dateArray[1]}/${dateArray[2]}/${dateArray[0]}`)
+
             }
         }))
     })

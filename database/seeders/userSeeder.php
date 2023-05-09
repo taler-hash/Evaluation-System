@@ -60,13 +60,6 @@ class userSeeder extends Seeder
             'company_name' => 'lex mark inc.'
         ]);
 
-        DB::table('portfolio')->insert([
-            'student_number' => '1',
-            'portfolio_name' => 'renemer.dedasi-ojtDocuments',
-            'comment' => 'done',
-            'status' => 'approved'
-        ]);
-
         DB::table('comments')->insert([
             'student_number' => '1',
             'comment' => 'hes doing good',
@@ -75,8 +68,8 @@ class userSeeder extends Seeder
         ]);
 
         DB::table('deadline')->insert([
+            'batch_year' => '2023',
             'date' => '05/08/2023',
-            'desc' => 'start',
         ]);
 
         DB::table('roles')->insert([

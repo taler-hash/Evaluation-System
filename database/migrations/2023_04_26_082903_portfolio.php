@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('student_number');
             $table->string('portfolio_name')->nullable();
             $table->string('comment')->nullable();
+            $table->string('approved_at')->nullable();
             $table->string('status');
         });
     }

@@ -3,7 +3,7 @@
 @include('/components/head')
 <title>Login</title>
 <body  x-data="data" >
-    <main x-on:keydown.enter="onClick" class="w-full h-screen bg-[url('{{asset('/assets/login-bg.jpg')}}')] bg-cover bg-no-repeat text-gray-700">
+    <main class="w-full h-screen bg-[url('{{asset('/assets/login-bg.jpg')}}')] bg-cover bg-no-repeat text-gray-700">
         <div class="w-full h-full flex flex-col pt-20 items-center">
             <div class="w-fit">
                 <img src="{{asset('/assets/ctulogo.png')}}" alt="" class="w-24">

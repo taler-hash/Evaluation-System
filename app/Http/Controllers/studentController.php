@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class studentController extends Controller
 {
     public function index(){
-        return view('/pages/student/student');
+        return view('/pages/student/portfolio');
     }
 
     public function fetchPortfolio(){
@@ -23,7 +23,7 @@ class studentController extends Controller
     }
     
     public function fetchDeadline(){
-        $data = Deadline::all();
+        $data = Deadline::select('*')->where('batch_year',session('batchYear'))->get();
 
         return response()->json($data);
     }

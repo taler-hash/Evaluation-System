@@ -16,7 +16,7 @@ class checkStudent
     public function handle(Request $request, Closure $next): Response
     {
         if(session('role') === 4)
-            return $next($request);
+        {return $next($request);}
             
         return redirect('/login');
     }

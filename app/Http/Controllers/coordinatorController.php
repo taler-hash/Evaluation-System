@@ -10,6 +10,7 @@ use App\Models\Course;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use App\Models\Portfolio;
+use App\Models\Deadline;
 use Carbon\Carbon;
 
 class coordinatorController extends Controller
@@ -243,10 +244,12 @@ class coordinatorController extends Controller
             $q->orderBy('id','desc');
         }])
         ->where('course',session('course'))
-        ->where('full_name','like',"%$request->searchString%")
-        ->orWhere('company_name','like',"%$request->searchString%")
-        ->orWhere('batch_year','like',"%$request->searchString%")
-        ->orWhere('status','like',"%$request->searchString%")
+        ->where(function($q) use ($request){
+            $q->orWhere('full_name','like',"%$request->searchString%")
+            ->orWhere('company_name','like',"%$request->searchString%")
+            ->orWhere('batch_year','like',"%$request->searchString%")
+            ->orWhere('status','like',"%$request->searchString%");
+        })
         ->paginate(5);
         return response()->json($data);
     }
@@ -258,6 +261,13 @@ class coordinatorController extends Controller
         ->orderBy('batch_year', 'desc')
         ->distinct()
         ->get();
+
+        return response()->json($data);
+    }
+
+    public function getAllDeadline(Request $request){
+
+        $data = Deadline::select('*')->where('batch_year', $request->selectedYear)->get();
 
         return response()->json($data);
     }
@@ -289,8 +299,19 @@ class coordinatorController extends Controller
 
         Portfolio::where('student_number', $request->student_number)
         ->update([
-            'status' => 'approved'
+            'status' => 'approved',
+            'approved_at' => Carbon::now()->format('m/d/Y')
         ]);
+
+        return response()->json('success');
+    }
+
+    public function setDeadline(Request $request){
+        
+        Deadline::updateOrCreate(
+            ['batch_year' => $request->batchYear],
+            ['date' => $request->date]
+        );
 
         return response()->json('success');
     }

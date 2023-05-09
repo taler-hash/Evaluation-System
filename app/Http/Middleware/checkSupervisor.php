@@ -16,7 +16,7 @@ class checkSupervisor
     public function handle(Request $request, Closure $next): Response
     {
         if(session('role') === 3)
-            return $next($request);
+        {return $next($request);}
             
         return redirect('/login');
     }

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('deadline', function (Blueprint $table) {
             $table->id();
+            $table->string('batch_year');
             $table->string('date');
-            $table->string('desc');
         });
     }
 

@@ -1,3 +1,12 @@
+@extends('layout.master')
+
+@section('navContent')
+
+
+@section('header', 'Portfolio')
+
+
+@section('content')
 <main x-data="studentPortfolio" class="relative px-8 flex w-full h-[calc(100%-7rem)] items-center justify-center">
     <section  class=" w-fit bg-white rounded-lg border shadow-md shadow-gray-400 flex p-4">
         <div class="w-full">
@@ -6,7 +15,7 @@
             </div>
             
             <div class="pb-2">
-                <p x-cloak x-show="Object.keys(portfolio).length === 0" class="font-medium text-sm">Document Name</p>
+                <p x-cloak x-show="Object.keys(portfolio).length === 0" class="font-medium text-sm"></p>
                 <div x-cloak x-show="Object.keys(portfolio).length === 0">
                     <label class="block mb-2 text-sm font-medium text-gray-900" for="file_input">Upload pdf</label>
                     <input x-on:change="pdf = $event.target.files[0]" accept="application/pdf" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 " aria-describedby="file_input_help" id="file_input" type="file">
@@ -44,8 +53,8 @@
                             portfolio.status === 'updated' ? 'bg-sky-500':
                             portfolio.status === 'approved' ? 'bg-green-500':
                                 'bg-red-500'
-                            "></span>
-                
+                        "></span>
+                        <span x-show="portfolio.status === 'approved' &&portfolioDate !== 'no value'" x-bind:class="portfolioDate ? 'bg-green-500' : 'bg-amber-500'"  x-text="portfolioDate ? 'on-time' : 'late'"class=" text-xs text-white font-bold px-1.5 py-0.5 rounded-full">late</span>
                     </p>
                 </div>
                 
@@ -60,10 +69,10 @@
             </div>
         </div>
     </section>
-    <aside x-cloak x-show="deadline" class="absolute top-0 overflow-hidden left-8 font-medium border w-fit rounded-lg bg-white shadow-shadow-lg shadow-md shadow-gray-400">
+    <aside  class="absolute top-0 overflow-hidden left-8 font-medium border w-fit rounded-lg bg-white shadow-shadow-lg shadow-md shadow-gray-400">
         <div class="relative">
             <div class="absolute top-0 left-0 h-24 w-1 bg-blue-500"></div>
-            <div class="p-4">Deadline of Portfolio will be on <span x-text="stringDateConversion()" class="font-bold">June 28,2023</span> </div> 
+            <div  class="p-4 flex items-center space-x-1"><p x-cloak x-show="deadline" class="">Deadline of Portfolio will be on </p> <span x-text="stringDateConversion()" class="font-bold"></span> </div> 
         </div>
     </aside>
 </main>
@@ -71,7 +80,7 @@
 @push('scripts')
 <script>
 
-    loadingButton({
+        loadingButton({
                 id:'SubmitAddPortfolio',
                 label: 'Submit',
                 onClick:'handleSubmitPortfolio("submitted")',
@@ -94,6 +103,7 @@
             isLoading:false,
             portfolio:{},
             deadline:'',
+            portfolioDate:true,
             pdf:'',
             errors:{
                 pdf:[]
@@ -101,8 +111,11 @@
 
             init(){
                 this.fetchPortfolio()
-                this.fetchDeadline()
-                this.stringDateConversion()
+                this.fetchDeadline().then((res)=>{
+                    this.stringDateConversion()
+                    this.dateCompare()
+                })
+                
             },
 
             fetchPortfolio(){
@@ -116,18 +129,41 @@
                 })
             },
 
-            fetchDeadline(){
-                axios.get('/student/fetchDeadline')
+            async fetchDeadline(){
+                await axios.get('/student/fetchDeadline')
                 .then((res)=>{ this.deadline = res.data[0]
-                console.log(res.data)})
+                })
+            },
+
+            dateCompare() {
+                if(this.deadline)
+                {
+                    // Convert the input date string to a Date object
+                    const date = new Date(this.portfolio.approved_at);
+
+                    // Create a Date object for May 8th, 2023
+                    const dateArray = this.deadline.date.split("/").map(Number);
+                    const dateToCompare = new Date(dateArray[2], dateArray[0] - 1, dateArray[1]); // Note: month is zero-indexed
+                    console.log(date)
+                    // Compare the two dates
+                    this.portfolioDate =  date <= dateToCompare;
+                }
+                else
+                {
+                    this.portfolioDate = 'no value'
+                }
             },
 
             stringDateConversion(){
-                const inputDate = this.deadline.date;
-                const date = new Date(inputDate);
-                const options = { month: 'long', day: 'numeric', year: 'numeric' };
-                const outputDate = date.toLocaleDateString('en-US', options);
-                return outputDate;
+                if(this.deadline)
+                {
+                    const inputDate = this.deadline.date;
+                    const date = new Date(inputDate);
+                    const options = { month: 'long', day: 'numeric', year: 'numeric' };
+                    const outputDate = date.toLocaleDateString('en-US', options);
+                    return outputDate;
+                }
+                return "No deadline is set"
             },
 
             handleSubmitPortfolio(status){
@@ -159,4 +195,9 @@
         }))
     })
 </script>
+@endpush
+@endsection
+
+@push('scripts')
+
 @endpush

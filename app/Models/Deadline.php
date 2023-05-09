@@ -9,6 +9,6 @@ class Deadline extends Model
 {
     use HasFactory;
     protected $table = 'deadline';
-
-    protected $fillable = ['date','deadline'];
+    public $timestamps = false;
+    protected $fillable = ['date','batch_year'];
 }
