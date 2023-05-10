@@ -1,6 +1,7 @@
 
 <div class="w-full h-full overflow-y-auto flex justify-center p-4">
     <div class="w-[50%] h-fit p-4 rounded-lg border border-gray-300 shadow-md shadow-gray-400 bg-white ">
+
         <div class="mb-6">
             <label class="block mb-2 text-sm font-medium text-gray-900 ">Full name</label>
             <input x-model="inputs.full_name" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " >
@@ -38,8 +39,8 @@
         @if(in_array(session('role'), [3]))
             <div class="mb-6">
                 <label class="block mb-2 text-sm font-medium text-gray-900 ">Company Position</label>
-                <input x-model="inputs.email" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " >
-                <template x-for="error in errors.email" class="w-fit">
+                <input readonly x-model="inputs.company_position" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " >
+                <template x-for="error in errors.company_name" class="w-fit">
                     <span x-text="error" class="text-xs text-rose-600 w-fit"></span><br>
                 </template>
             </div>
@@ -52,7 +53,7 @@
             </template>
         </div>
         <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-900 ">Password</label>
+            <label class="block mb-2 text-sm font-medium text-gray-900 ">Change Password</label>
             <div class="flex">
                 <input x-model="inputs.password" x-bind:type="canSee ? 'text' : 'password'" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " >
                 <button x-on:click="canSee = !canSee" class="pl-1">
@@ -73,92 +74,3 @@
     </div>
 
 </div>
-
-@push('scripts')
-<script>
-    loadingButton({
-            id:'SubmitChangeInfo',
-            label: 'Update',
-            onClick:'handleUpdateInfo',
-            param:'isLoading',
-            width:'full',
-            color:'red'
-    })
-
-    document.addEventListener('alpine:init',()=>{
-        Alpine.data('changeInfo',()=>({
-            inputs:{
-                full_name:'',
-                user_name:'',
-                password:'',
-                email:'',
-                password:'',
-                company_name:'',
-                company_position:'',
-                contact_number:''
-
-            },
-            defaultInputs:{},
-            errors:{
-                full_name:[],
-                user_name:[],
-                password:[],
-                email:[],
-                password:[],
-                company_name:[],
-                company_position:[],
-                contact_number:[]
-            },
-            isLoading:false,
-            canSee:false,
-
-            init(){
-                this.fetchUser()
-            },
-
-            fetchUser(){
-                axios.get('/fetchUser')
-                .then((res)=>{
-                    console.log(res.data[0])
-                    for (let i in this.inputs) {
-                        for (let f in res.data[0]) {
-                            if(i === f && i !== 'password' ){
-                                this.inputs[f] = res.data[0][f]
-                            }
-                        }
-                    }
-                    this.defaultInputs = JSON.stringify(this.inputs)
-                })
-            },
-
-            handleUpdateInfo(){
-                console.log(this.defaultInputs)
-                if(this.defaultInputs === JSON.stringify(this.inputs))
-                {
-                    useToast({
-                        message:'No Changes were Made',
-                        type:'info'
-                    })
-                }
-                else
-                {   
-                    axios.post('/updateUser', this.inputs)
-                    .then((res)=>{
-                        useToast({
-                            message:'Successfully Updated',
-                            type:'success'
-                        })
-                        this.fetchUser()
-                    })
-                    .catch((err)=>{
-                        console.log(err)
-                        this.errors = err.response.data.errors
-                    })
-                }
-
-                
-            }
-        }))
-    })
-</script>
-@endpush

@@ -10,16 +10,16 @@ use Illuminate\Support\Facades\Hash;
 class AuthUser
 {
     public static function Auth($username, $password){
-        $admin = Admin::select('full_name', 'password','role_id')
+        $admin = Admin::select('*')
         ->where('user_name','=',$username)
         ->first();
 
-        $coordinator = Coordinator::select('full_name', 'course_handled' ,'password','role_id')
+        $coordinator = Coordinator::select('*')
         ->where('status', '=','active')
         ->where('user_name','=',$username)
         ->first();
 
-        $supervisor = Supervisor::select('full_name', 'course_handled' , 'password','role_id','company_name')
+        $supervisor = Supervisor::select('*')
         ->where('status', '=','active')
         ->where('user_name','=',$username)
         ->first();
@@ -31,6 +31,7 @@ class AuthUser
 
         if($admin && Hash::check($password, $admin->password))
         {
+            session(['id' => $admin->id]);
             session(['fullName' => $admin->full_name]);
             session(['userName' => $admin->user_name]);
             session(['role' => $admin->role_id]);
@@ -40,6 +41,7 @@ class AuthUser
 
         if($coordinator && Hash::check($password, $coordinator->password))
         {
+            session(['id' => $coordinator->id]);
             session(['fullName' => $coordinator->full_name]);
             session(['userName' => $coordinator->user_name]);
             session(['role' => $coordinator->role_id]);
@@ -50,6 +52,7 @@ class AuthUser
 
         if($supervisor && Hash::check($password, $supervisor->password))
         {
+            session(['id' => $supervisor->id]);
             session(['fullName' => $supervisor->full_name]);
             session(['companyName' => $supervisor->company_name]);
             session(['userName' => $supervisor->user_name]);
@@ -61,6 +64,7 @@ class AuthUser
 
         if($student && Hash::check($password, $student->password))
         {
+            session(['id' => $student->id]);
             session(['fullName' => $student->full_name]);
             session(['userName' => $student->user_name]);
             session(['role' => $student->role_id]);
