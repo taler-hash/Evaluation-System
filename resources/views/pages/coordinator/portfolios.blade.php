@@ -45,7 +45,7 @@
                                 <a
                                     class="text-sm font-medium rounded-lg py-0.5 px-1 bg-green-500 hover:bg-green-600 transition text-white"
                                     x-show ="data.portfolio !== null " 
-                                    x-bind:href="data.portfolio !== null && `/student/viewPdf/${batchYears[0].batch_year}/${data.portfolio.portfolio_name}`" target="_blank" 
+                                    x-bind:href="data.portfolio !== null && `/coordinator/viewPdf/${batchYears[0].batch_year}/${data.portfolio.portfolio_name}`" target="_blank" 
                                 >
                                 View
                                 </a>

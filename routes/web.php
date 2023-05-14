@@ -100,6 +100,9 @@ use App\Http\Controllers\changeInfoController;
                     Route::post('/addComment',[coordinatorController::class,'addComment']);
                     Route::post('/approvePortfolio', [coordinatorController::class,'approvePortfolio']);
                     Route::post('/setDeadline', [coordinatorController::class,'setDeadline']);
+
+                    //View Pdf
+                    Route::get('/viewPdf/{batchYear}/{portfolioName}',[studentController::class,'viewPdf']);
                 });
             });
             

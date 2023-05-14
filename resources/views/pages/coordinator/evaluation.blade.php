@@ -192,7 +192,6 @@
                         }
                     }
                 }
-                console.log(this.defaultData)
                 this.modalType = 'viewEvaluationModal'           
             },
         }))

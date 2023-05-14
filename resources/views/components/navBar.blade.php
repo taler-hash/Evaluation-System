@@ -120,7 +120,6 @@
                 const currentPath = window.location.pathname;
                     const segments = currentPath.split('/');
                     const page = segments[segments.length - 1];
-                    console.log(page)
                     this.activeLink = page
             },
 
