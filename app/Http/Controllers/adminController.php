@@ -121,4 +121,35 @@ class adminController extends Controller
 
         return response()->json('success');
     }
+
+    public function courses(){
+        return view('/pages/admin/courses');
+    }
+
+    public function fetchCourses(){
+        $data = Course::all();
+
+        return response()->json($data);
+    }
+
+    public function addCourse(Request $request){
+
+        $request->validate(
+        [
+            'course' => 'required'
+        ]);
+
+        $course = new Course();
+        $course->course = strtolower($request->course);
+        $course->save();
+
+        return response()->json('success');
+    }
+
+    public function deleteCourse(Request $request){
+
+        Course::where('id', $request->id)->delete();
+
+        return response()->json('success');
+    }
 }

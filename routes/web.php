@@ -57,14 +57,21 @@ use App\Http\Controllers\changeInfoController;
         //Admin
             Route::middleware('checkAdmin')->group(function(){
                 //Web Routes
-                Route::get('/coordinator',[adminController::class,'coordinator']);    
+                Route::get('/coordinator',[adminController::class,'coordinator']);
+                Route::get('/courses',[adminController::class,'courses']);    
 
                 //Api Routes
                 Route::prefix('admin')->group(function(){
 
+                    //Coordinator
                     Route::get('/fetchCoordinator',[adminController::class,'fetchCoordinator']);
                     Route::post('/addCoordinator',[adminController::class,'addCoordinator']);
                     Route::post('/updateCoordinator',[adminController::class,'updateCoordinator']);
+                    
+                    //Courses
+                    Route::get('/fetchCourses',[adminController::class,'fetchCourses']);
+                    Route::post('/addCourse',[adminController::class,'addCourse']);
+                    Route::post('/deleteCourse',[adminController::class,'deleteCourse']);
                 });
             });
             

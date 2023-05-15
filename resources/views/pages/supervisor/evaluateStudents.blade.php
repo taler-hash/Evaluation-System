@@ -238,6 +238,7 @@
                     {
                         if(this.checkIfDoneComment(data.comments[0].evaluated_at))
                         {
+                            
                             useToast({
                                 message:`student ${data.full_name} has already been evaluated this week`,
                                 type:'info'
@@ -302,7 +303,7 @@
                 },
 
                 checkIfDoneComment(evaluated_date){
-                    let res
+                    
                     // Get the current date
                     const currentDate = new Date();
 
@@ -314,13 +315,13 @@
                     const dateToCompareString = evaluated_date;
                     const dateParts = dateToCompareString.split('/');
                     const dateToCompare = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
-
+                    console.log(dateToCompare)
                     // Check if the date to compare is in the current week
                     const isDateToCompareInCurrentWeek = (
                         (dateToCompare >= currentWeekStartDate) &&
                         (dateToCompare <= currentWeekEndDate)
                     );
-
+                    console.log(isDateToCompareInCurrentWeek)
                     // Disable the button if the date is in the current week
                     const button = document.getElementById('my-button'); // Replace with the ID of your button
                     if (isDateToCompareInCurrentWeek) {
