@@ -9,26 +9,31 @@
 
 @section('content')
 <div x-data="portfolio" class="px-8 overflow-hidden h-[calc(100%-5rem)]">
-    <div class="flex items-center space-x-1">
-        <div class="flex space-x-2 items-center">
-            <div class="shrink">
-                <p class="font-medium">Batch Year</p>
+    <div class="flex justify-between">
+        <div class="flex items-center space-x-1">
+            <div class="flex space-x-2 items-center">
+                <div class="shrink">
+                    <p class="font-medium">Batch Year</p>
+                </div>
+                <select x-model="selectedYear" x-on:change="handleChangeSelectedBatchYear()" class="bg-gray-50 border border-gray-300 rounded-lg font-semibold focus:ring-blue-500 focus:border-blue-500 block w-fit p-2.5">
+                    <template x-for="data in batchYears">
+                        <option x-text="data.batch_year" x-bind:value="data.batch_year"></option>
+                    </template>
+                </select>
             </div>
-            <select x-model="selectedYear" x-on:change="handleChangeSelectedBatchYear()" class="bg-gray-50 border border-gray-300 rounded-lg font-semibold focus:ring-blue-500 focus:border-blue-500 block w-fit p-2.5">
-                <template x-for="data in batchYears">
-                    <option x-text="data.batch_year" x-bind:value="data.batch_year"></option>
-                </template>
-            </select>
-        </div>
-        <div x-show="!deadline || updateDeadline" class="w-fit flex items-center space-x-1">
-            <div class="shrink">
-                <p class="font-medium">Set Deadline</p>
+            <div x-show="!deadline || updateDeadline" class="w-fit flex items-center space-x-1">
+                <div class="shrink">
+                    <p class="font-medium">Set Deadline</p>
+                </div>
+                <input x-model="setDeadline" min="{{ date('Y-m-d')}}" type="date" class="w-fit p-2 border border-gray-300 rounded-lg font-semibold" >
+                <button  x-on:click="handleSubmitSetDeadline()" class="px-2.5 py-2 font-bold text-white rounded-lg bg-green-500 transition hover:bg-green-600">Submit</button>
             </div>
-            <input x-model="setDeadline" min="{{ date('Y-m-d')}}" type="date" class="w-fit p-2 border border-gray-300 rounded-lg font-semibold" >
-            <button  x-on:click="handleSubmitSetDeadline()" class="px-2.5 py-2 font-bold text-white rounded-lg bg-green-500 transition hover:bg-green-600">Submit</button>
+            <div x-show="deadline && !updateDeadline " class="">
+                Deadline Date <span class="font-bold" x-text="stringDateConversion(deadline)"></span>
+            </div>
         </div>
-        <div x-show="deadline && !updateDeadline " class="">
-            Deadline Date <span class="font-bold" x-text="stringDateConversion(deadline)"></span>
+        <div class="">
+            <input x-model="searchString" type="text" class="rounded-lg border border-gray-300 p-2" placeholder="Search Bar">
         </div>
     </div>
     <div class="flex items-center mt-2 space-x-1">
@@ -36,7 +41,7 @@
         <button x-on:click="updateDeadline = !updateDeadline" class="px-2 py-1 bg-green-500 transition hover:bg-green-600 text-sm font-bold text-white rounded-lg">Update Deadline</button>
     </div>
     <div  class=" w-full max-h-[calc(100%-4.78rem)] overflow-y-auto flex justify-center flex-wrap">
-        <template x-for="(data, index) in students">
+        <template x-for="(data, index) in filteredPortfolios">
             <div class="p-2 ">
                 <div  class=" w-fit h-fit bg-white p-4 shadow-md shadow-gray-400 border  rounded-lg">
                     <div class="flex items-center justify-center">
@@ -118,6 +123,7 @@
 <script>
     document.addEventListener('alpine:init',()=>{
         Alpine.data('portfolio',()=>({
+            searchString:'',
             selected:'',
             comment:'',
             batchYears:[],
@@ -186,6 +192,10 @@
                 .catch((err)=>{
                     console.log(err)
                 })
+            },
+
+            filteredPortfolios(){
+                return this.students.filter(item=>item.full_name.toLowerCase().includes(this.searchString.toLowerCase()))
             },
 
             dateCompare(portfolioDate) {
