@@ -35,13 +35,14 @@
                         </button>
                     </div>
                     <template x-for="error in errors.password" class="w-fit">
-                        <span x-text="error" class="text-xs text-rose-600 w-fit"></span></br>
+                        <span x-text="error" class="text-xs text-rose-600 w-fit"></span><br>
                     </template>
                 </div>
                     <button id="loginSubmitButton"></button>
                 </div>
             </main>
         </div>
+        @include('/pages/login/modals/greetingsModal')
     </main>
 
     <script>
@@ -57,6 +58,7 @@
 
         document.addEventListener('alpine:init',()=>{
             Alpine.data('data',()=>({
+                modalType:'',
                 isLoading:false,
                 canSee:false,
                 username:'',
@@ -64,6 +66,12 @@
                 errors:{
                     username:[],
                     password:[]
+                },
+
+                init(){
+                    setTimeout(() => {
+                        this.modalType = 'greetingsModal'
+                    }, 250);
                 },
 
                 handleCanSee(){
@@ -96,6 +104,10 @@
                         }
                             
                     })
+                },
+
+                handleCloseModal(){
+                    this.modalType=''
                 }
             }))
         })

@@ -126,11 +126,12 @@ class coordinatorController extends Controller
 
     public function fetchStudents(Request $request){
         $data = Student::with(['supervisor'])
-        ->where('course',session('course'))
-        ->where('full_name','like',"%$request->searchString%")
+        ->where('course',session('course'), function($q) use ($request){
+            $q->where('full_name','like',"%$request->searchString%")
         ->orWhere('company_name','like',"%$request->searchString%")
         ->orWhere('batch_year','like',"%$request->searchString%")
-        ->orWhere('status','like',"%$request->searchString%")
+        ->orWhere('status','like',"%$request->searchString%");
+        })
         ->orderBy('id','desc')
         ->paginate(5);
         $course = Course::select('*')->get();
