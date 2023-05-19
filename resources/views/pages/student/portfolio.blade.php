@@ -7,14 +7,35 @@
 
 
 @section('content')
-<main x-data="studentPortfolio" class="relative px-8 flex w-full h-[calc(100%-7rem)] items-center justify-center">
-    <section  class=" w-fit bg-white rounded-lg border shadow-md shadow-gray-400 flex p-4">
+<main x-data="studentPortfolio" class="relative px-8 flex w-full h-[calc(100%-7rem)] items-center justify-center overflow-y-auto">
+    <section  class="overflow-y-auto w-fit bg-white rounded-lg border shadow-md shadow-gray-400 flex p-4 h-full">
         <div class="w-full">
-            <div class="flex justify-between w-full">
-                <p class="font-medium text-lg pb-4">Portfolio</p>
+            <div class="flex justify-between items-endw-full pb-2 space-x-2">
+                <div class="font-medium text-lg ">Portfolio</div>
+                <div  class=" flex items-center space-x-1"><p x-cloak x-show="deadline" class="">Deadline </p> <span x-text="stringDateConversion()" class="font-bold"></span> </div> 
             </div>
             
             <div class="pb-2">
+                <p class=" font-medium my-1">Status:
+                    <span x-text="portfolio === null ? 'None' : portfolio.status"
+                        class="text-xs text-white font-bold px-1.5 py-0.5 rounded-full"
+                        x-bind:class="
+                        portfolio.status === 'submitted' ? 'bg-blue-500':
+                        portfolio.status === 'correction' ? 'bg-yellow-500':
+                        portfolio.status === 'updated' ? 'bg-sky-500':
+                        portfolio.status === 'approved' ? 'bg-green-500':
+                            'bg-red-500'
+                    "></span>
+                    <span x-show="portfolio.status === 'approved' &&portfolioDate !== 'no value'" x-bind:class="portfolioDate ? 'bg-green-500' : 'bg-amber-500'"  x-text="portfolioDate ? 'on-time' : 'late'"class=" text-xs text-white font-bold px-1.5 py-0.5 rounded-full">late</span>
+                </p>
+                <div x-cloak x-show="Object.keys(portfolio).length !== 0 && portfolio.status === 'correction'">
+                    <object  type="application/pdf" x-bind:data="`/student/viewPdf/{{session('batchYear')}}/${portfolio.portfolio_name}`" width="600" height="400">
+                        <p>Sorry, your browser doesn't support embedded PDFs.</p>
+                    </object>
+                    <p class="pt-4">Comments</p>
+                    <div x-text="portfolio.comment" class="text-xs px-2 pb-4"></div>
+                </div>
+                
                 <p x-cloak x-show="Object.keys(portfolio).length === 0" class="font-medium text-sm"></p>
                 <div x-cloak x-show="Object.keys(portfolio).length === 0">
                     <label class="block mb-2 text-sm font-medium text-gray-900" for="file_input">Upload pdf</label>
@@ -41,40 +62,18 @@
                         </div>
                     </div>
                     <div x-show="portfolio.status !== 'correction'" class="flex space-x-1 items-center">
-                        <p class="font-medium">PDF:</p>
-                        <a  x-bind:href="`/student/viewPdf/{{session('batchYear')}}/${portfolio.portfolio_name}`" target="_blank" class="text-lg font-medium rounded-lg py-0.5 px-1 bg-green-500 hover:bg-green-600 transition text-white">View</a>
+                        
+                        <object  type="application/pdf" x-bind:data="`/student/viewPdf/{{session('batchYear')}}/${portfolio.portfolio_name}`" width="600" height="400">
+                            <p>Sorry, your browser doesn't support embedded PDFs.</p>
+                        </object>
                     </div>
-                    <p class=" font-medium mt-2">Status:
-                        <span x-text="portfolio === null ? 'None' : portfolio.status"
-                            class="text-xs text-white font-bold px-1.5 py-0.5 rounded-full"
-                            x-bind:class="
-                            portfolio.status === 'submitted' ? 'bg-blue-500':
-                            portfolio.status === 'correction' ? 'bg-yellow-500':
-                            portfolio.status === 'updated' ? 'bg-sky-500':
-                            portfolio.status === 'approved' ? 'bg-green-500':
-                                'bg-red-500'
-                        "></span>
-                        <span x-show="portfolio.status === 'approved' &&portfolioDate !== 'no value'" x-bind:class="portfolioDate ? 'bg-green-500' : 'bg-amber-500'"  x-text="portfolioDate ? 'on-time' : 'late'"class=" text-xs text-white font-bold px-1.5 py-0.5 rounded-full">late</span>
-                    </p>
+                    
                 </div>
                 
             </div>
-            <div x-cloak x-show="Object.keys(portfolio).length !== 0 && portfolio.status === 'correction'" class="font-medium">
-                <div class="flex items-center space-x-1">
-                    <p class="font-medium">PDF:</p>
-                    <a  x-bind:href="`/student/viewPdf/{{session('batchYear')}}/${portfolio.portfolio_name}`" target="_blank" class="text-sm font-medium rounded-lg py-0.5 px-1 bg-green-500 hover:bg-green-600 transition text-white">View last uploaded</a>
-                </div>
-                <p class="">Comments</p>
-                <div x-text="portfolio.comment" class="text-xs px-2"></div>
-            </div>
         </div>
     </section>
-    <aside  class="absolute top-0 overflow-hidden left-8 font-medium border w-fit rounded-lg bg-white shadow-shadow-lg shadow-md shadow-gray-400">
-        <div class="relative">
-            <div class="absolute top-0 left-0 h-24 w-1 bg-blue-500"></div>
-            <div  class="p-4 flex items-center space-x-1"><p x-cloak x-show="deadline" class="">Deadline of Portfolio will be on </p> <span x-text="stringDateConversion()" class="font-bold"></span> </div> 
-        </div>
-    </aside>
+
 </main>
 
 @push('scripts')
