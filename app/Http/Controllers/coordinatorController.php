@@ -141,12 +141,12 @@ class coordinatorController extends Controller
     public function addNewStudent(Request $request){
         $request->validate(
             [
-                'student_number' => ' required|numeric',
+                'student_number' => ' required|numeric|unique:student_users,student_number',
                 'full_name' => 'required|unique:student_users,full_name|regex:/^(?!.*\.).*$/',
                 'contact_number' => 'required|numeric|min:11||unique:student_users,contact_number',
                 'email' => 'required|email|unique:student_users,email',
                 'company_name' => 'required|exists:supervisor_users,company_name',
-                'user_name' => 'required',
+                'user_name' => 'required|unique:student_users,user_name',
                 'course' => 'required',
                 'password' => 'required|min:6',
             ],

@@ -34,10 +34,10 @@ class adminController extends Controller
 
         $request->validate(
             [
-                'full_name' => 'required|unique:student_users,full_name|regex:/^(?!.*\.).*$/',
+                'full_name' => 'required|unique:coordinator_users,full_name|regex:/^(?!.*\.).*$/',
                 'contact_number' => 'required|numeric|min:11||unique:student_users,contact_number',
                 'email' => 'required|email|unique:student_users,email',
-                'user_name' => 'required',
+                'user_name' => 'required|unique:coordinator_users,user_name',
                 'course' => 'required',
                 'password' => 'required|min:6',
             ],

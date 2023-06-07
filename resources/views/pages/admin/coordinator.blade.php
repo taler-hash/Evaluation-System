@@ -199,15 +199,6 @@
                 this.canSee = !this.canSee
             },
 
-            generateUsername(){
-                let name = this.input.full_name 
-                let nameArray = name.split(' '); // split the string into an array of words
-                let firstName = nameArray[0]; // get the first word as the first name
-                let lastName = nameArray[nameArray.length - 1]; // get the last word as the last name
-                let fullName = `${firstName}.${lastName}`; // concatenate the first and last names with a dot
-                this.input.user_name = fullName.toLowerCase();
-            },
-
             handleOpenAddCoordinatorModal(modalType){
                 
                 this.modalType = modalType
@@ -224,6 +215,7 @@
 
             handleSubmitAddCoordinator(){
                 this.isLoading = true
+                this.input.full_name = this.input.full_name.toLowerCase();
                 axios.post('/admin/addCoordinator', this.input)
                 .then((res)=>{
                     if(res.data === 'success')

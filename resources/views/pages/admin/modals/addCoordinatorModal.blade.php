@@ -28,7 +28,7 @@
               <div class="p-6">
                 <div class="space-y-2 mb-2">
                     <p for="" class="">Full name Format(f, m, l)<span class="text-red-500">*</span></p>
-                    <input x-on:input.debounce.2000ms="generateUsername" x-model="input.full_name" type="text" class="rounded-md border border-gray-400 bg-gray-50 font-semibold px-2.5 p-1 w-full" placeholder="Input Full name">
+                    <input x-model="input.full_name" type="text" class="rounded-md border border-gray-400 bg-gray-50 font-semibold px-2.5 p-1 w-full" placeholder="Input Full name">
                     <template x-for="error in errors.full_name" class="w-fit">
                         <span x-text="error" class="text-xs text-rose-600 w-fit"></span><br>
                     </template>
@@ -61,8 +61,8 @@
                     </template>
                 </div>
                 <div class="space-y-2 mb-2">
-                    <p for="" class="">Generated Username <span class="text-red-500">*</span></p>
-                    <input readonly x-model="input.user_name" type="text" class="rounded-md border border-gray-400 bg-gray-50 font-semibold px-2.5 p-1 w-full" placeholder="Generated Username">
+                    <p for="" class="">Username <span class="text-red-500">*</span></p>
+                    <input x-model="input.user_name" type="text" class="rounded-md border border-gray-400 bg-gray-50 font-semibold px-2.5 p-1 w-full" placeholder="Input Username">
                     <template x-for="error in errors.user_name" class="w-fit">
                         <span x-text="error" class="text-xs text-rose-600 w-fit"></span><br>
                     </template>

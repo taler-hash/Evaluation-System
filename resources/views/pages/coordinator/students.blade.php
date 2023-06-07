@@ -238,6 +238,7 @@
 
             handleSubmitaddStudent(){
                 this.isLoading = true
+                this.input.full_name = this.input.full_name.toLowerCase()
                 axios.post('/coordinator/addNewStudent',this.input
                 )
                 .then((res)=>{
@@ -254,15 +255,6 @@
                     this.isLoading = false
                     this.errors = err.response.data.errors
                 })
-            },
-
-            generateUsername(){
-                let name = this.input.full_name 
-                let nameArray = name.split(' '); // split the string into an array of words
-                let firstName = nameArray[0]; // get the first word as the first name
-                let lastName = nameArray[nameArray.length - 1]; // get the last word as the last name
-                let fullName = `${firstName}.${lastName}`; // concatenate the first and last names with a dot
-                this.input.user_name = fullName.toLowerCase();
             },
 
             handleCanSee(){
@@ -286,6 +278,7 @@
             },
 
             handleUpdateSubmit(){
+                this.input.full_name = this.input.full_name.toLowerCase()
                 if(this.defaultInput === JSON.stringify(this.input))
                 {
                     useToast({
